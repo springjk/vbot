@@ -27,16 +27,9 @@ class GroupChange extends Message implements MessageInterface
     {
         if (str_contains($this->message, '邀请你')) {
             $this->action = 'INVITE';
-        } elseif (str_contains($this->message, '加入了群聊') || str_contains($this->message, '分享的二维码加入群聊')) {
-            $isMatch = preg_match('/"?(.+)"?邀请"(.+)"加入了群聊/', $this->message, $match);
-            if ($isMatch) {
-                $this->inviter = $match[1];
-                $this->invited = $match[2];
-            } else {
-                preg_match('/"(.+)"通过扫描"?(.+)"?分享的二维码加入群聊/', $this->message, $match);
-                $this->inviter = $match[2];
-                $this->invited = $match[1];
-            }
+        } elseif (! empty($parseInfo = $this->parseJoinMessage($this->message))) {
+            $this->inviter = $parseInfo['inviter'];
+            $this->invited = $parseInfo['invited'];
             $this->action = 'ADD';
         } elseif (str_contains($this->message, '移出了群聊')) {
             $this->action = 'REMOVE';
@@ -47,7 +40,27 @@ class GroupChange extends Message implements MessageInterface
         }
     }
 
-    protected function getExpand():array
+    protected function parseJoinMessage($message): array
+    {
+        switch ($message) {
+            case preg_match('/"?(.+)"?邀请"(.+)"加入了群聊/', $message, $match):
+                $parseInfo = ['inviter' => $match[1], 'invited' => $match[2]];
+                break;
+            case preg_match('/"(.+)"通过扫描"?(.+)"?分享的二维码加入群聊/', $message, $match):
+                $parseInfo = ['inviter' => $match[2], 'invited' => $match[1]];
+                break;
+            case preg_match('/"?(.+)"?通过"(.+)"加入群聊/', $message, $match):
+                $parseInfo = ['inviter' => $match[2], 'invited' => $match[1]];
+                break;
+            default:
+                $parseInfo = [];
+                break;
+        }
+
+        return $parseInfo;
+    }
+
+    protected function getExpand(): array
     {
         return ['action' => $this->action, 'inviter' => $this->inviter, 'invited' => $this->invited];
     }
