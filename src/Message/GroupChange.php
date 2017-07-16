@@ -43,13 +43,13 @@ class GroupChange extends Message implements MessageInterface
     protected function parseJoinMessage($message): array
     {
         switch ($message) {
-            case preg_match('/"?(.+)"?邀请"(.+)"加入了群聊/', $message, $match):
+            case ! empty(preg_match('/"?(.+)"?邀请"(.+)"加入了群聊/', $message, $match)):
                 $parseInfo = ['inviter' => $match[1], 'invited' => $match[2]];
                 break;
-            case preg_match('/"(.+)"通过扫描"?(.+)"?分享的二维码加入群聊/', $message, $match):
+            case ! empty(preg_match('/"(.+)"通过扫描"?(.+)"?分享的二维码加入群聊/', $message, $match)):
                 $parseInfo = ['inviter' => $match[2], 'invited' => $match[1]];
                 break;
-            case preg_match('/"?(.+)"?通过"(.+)"加入群聊/', $message, $match):
+            case !empty(preg_match('/(.+)通过(.+)加入群聊/', $message, $match)):
                 $parseInfo = ['inviter' => $match[2], 'invited' => $match[1]];
                 break;
             default:

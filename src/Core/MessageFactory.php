@@ -68,7 +68,7 @@ class MessageFactory
                 } elseif (str_contains($msg['Content'], '添加') || str_contains($msg['Content'], '打招呼')) {
                     // 添加好友
                     return (new NewFriend())->make($msg);
-                } elseif (str_contains($msg['Content'], '加入了群聊') || str_contains($msg['Content'], '移出了群聊') || str_contains($msg['Content'], '改群名为') || str_contains($msg['Content'], '移出群聊') || str_contains($msg['Content'], '邀请你') || str_contains($msg['Content'], '分享的二维码加入群聊')) {
+                } elseif (str_contains($msg['Content'], '加入了群聊') || str_contains($msg['Content'], '移出了群聊') || str_contains($msg['Content'], '改群名为') || str_contains($msg['Content'], '移出群聊') || str_contains($msg['Content'], '邀请你') || str_contains($msg['Content'], '加入群聊')) {
                     return (new GroupChange())->make($msg);
                 }
                 break;
